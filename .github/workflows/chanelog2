@@ -1,0 +1,48 @@
+name: Auto-generate changelog
+
+on:
+  release:
+    types: [created, edited]  # Esto hará que el flujo de trabajo se ejecute cuando un release se cree o se edite.
+
+jobs:
+  generate-changelog:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Asegúrate de obtener todo el historial de commits
+
+    - name: Generate changelog
+      run: |
+        # Configuración
+        CHANGELOG_FILE="CHANGELOG.md"
+        FEATURE_SECTION="## Features"
+        BUGFIX_SECTION="## Bug Fixes"
+        RELEASE_SECTION="## Releases"
+        
+        # Crea el archivo si no existe
+        if [ ! -f "$CHANGELOG_FILE" ]; then
+          touch "$CHANGELOG_FILE"
+        fi
+
+        # Inicializa las secciones del changelog
+        echo -e "$FEATURE_SECTION\n" > "$CHANGELOG_FILE"
+        echo -e "$BUGFIX_SECTION\n" >> "$CHANGELOG_FILE"
+        echo -e "$RELEASE_SECTION\n" >> "$CHANGELOG_FILE"
+        
+        # Filtra los commits y categoriza
+        git log --pretty=format:"%s" | while read commit_message; do
+          if [[ "$commit_message" == feat:* ]]; then
+            echo "- $commit_message" >> "$CHANGELOG_FILE"
+          elif [[ "$commit_message" == fix:* ]]; then
+            echo "- $commit_message" >> "$CHANGELOG_FILE"
+          elif [[ "$commit_message" == release:* ]]; then
+            echo "- $commit_message" >> "$CHANGELOG_FILE"
+          fi
+        done
+        
+        # Añadir el changelog actualizado a git
+        git add "$CHANGELOG_FILE"
+        git commit -m "docs: update changelog"
+        git push
