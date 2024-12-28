@@ -1,21 +1,19 @@
-name: Auto generate changelog
+name: Auto Generate Chanelog
 on:
   release:
     types: [created, edited]
 
+    
 jobs:
-  generate-changelog:
+  changelog:
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        ref: ${{ github.ref }}
 
-    - uses: BobAnkh/auto-generate-changelog@v1.2.5
-      with:
-        REPO_NAME: '<YourUserName>/<YourRepoName>'
-        ACCESS_TOKEN: ${{secrets.KEY_SECRET}}
-        PATH: 'CHANGELOG.md'
-        COMMIT_MESSAGE: 'docs(CHANGELOG): update release notes'
-        TYPE: 'feat:Feature,fix:Bug Fixes,docs:Documentation,refactor:Refactor,perf:Performance Improvements'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: conventional Changelog Action
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@v3.7.1
+        with:
+          github-token: ${{ secrets.KEY_SECRET }}
+          # skip-version-file: 'true'
