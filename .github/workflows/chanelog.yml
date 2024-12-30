@@ -27,7 +27,9 @@ jobs:
           git-message: "chore: update changelog after release"  # Mensaje del commit
           skip-on-empty: false               # No ignorar releases vacíos
           tag-prefix: "v"                    # Prefijo para las etiquetas (si usas etiquetas como 'vX.X.X')
+          skip-version-file: false          # No saltarse la actualización del archivo de versión
+          version-file: "./package.json"    # Archivo donde se guarda la versión
+          version-path: "version"           # Ruta del valor de la versión en el archivo
+          config-file-path: ""              # Si tienes configuración extra, puedes agregarla aquí
+          pre-commit: false                 # No hacer commit previo si no es necesario
 
-      # 3. Mostrar el changelog en los logs para depuración (opcional)
-      - name: Display Changelog
-        run: cat CHANGELOG.md
