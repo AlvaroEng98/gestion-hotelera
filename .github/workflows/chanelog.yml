@@ -1,19 +1,45 @@
-name: Auto Generate Chanelog
+# Nombre del flujo de trabajo
+name: Generate Changelog After Release
+
+# Disparador: Cuando se publica un release
 on:
   release:
-    types: [created, edited]
+    types:
+      - published
 
-    
 jobs:
-  changelog:
+  generate_changelog:
+    name: Generate Changelog
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # 1. Checkout del repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: conventional Changelog Action
-        id: changelog
-        uses: TriPSs/conventional-changelog-action@v3.7.1
+      # 2. Instalar Node.js (requerido para usar conventional-changelog)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          github-token: ${{ secrets.KEY_SECRET }}
-          # skip-version-file: 'true'
+          node-version: '16'
+
+      # 3. Instalar el generador de changelog
+      - name: Install Conventional Changelog CLI
+        run: npm install -g conventional-changelog-cli
+
+      # 4. Generar el changelog
+      - name: Generate Changelog
+        run: |
+          # Generar el changelog a partir de los commits
+          conventional-changelog -p angular -i CHANGELOG.md -s
+          
+      # 5. Hacer commit del changelog actualizado
+      - name: Commit Changelog
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "chore: update changelog after release"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.KEY_SECRET }}
