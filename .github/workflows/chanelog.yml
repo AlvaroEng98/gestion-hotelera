@@ -1,5 +1,4 @@
-# Nombre del flujo de trabajo
-name: Generate Changelog After Release
+name: Update Changelog After Release
 
 # Disparador: Cuando se publica un release
 on:
@@ -8,38 +7,28 @@ on:
       - published
 
 jobs:
-  generate_changelog:
-    name: Generate Changelog
+  update_changelog:
     runs-on: ubuntu-latest
 
     steps:
       # 1. Checkout del repositorio
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      # 2. Instalar Node.js (requerido para usar conventional-changelog)
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          fetch-depth: 0  # Asegura que todos los commits y etiquetas estén disponibles
 
-      # 3. Instalar el generador de changelog
-      - name: Install Conventional Changelog CLI
-        run: npm install -g conventional-changelog-cli
+      # 2. Generar y actualizar el archivo de changelog
+      - name: Generate and Commit Changelog
+        uses: TriPSs/conventional-changelog-action@v3.7.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          output-file: CHANGELOG.md           # Archivo que contendrá el changelog
+          preset: angular                    # Usar formato de commits convencionales (Angular preset)
+          commit-message: "chore: update changelog after release"  # Mensaje del commit
+          skip-empty: false                  # No ignorar releases vacíos
+          skip-unstable: false               # Incluir commits de versiones preliminares (si aplica)
+          dry-run: false                     # Generar y aplicar cambios directamente
 
-      # 4. Generar el changelog
-      - name: Generate Changelog
-        run: |
-          # Generar el changelog a partir de los commits
-          conventional-changelog -p angular -i CHANGELOG.md -s
-          
-      # 5. Hacer commit del changelog actualizado
-      - name: Commit Changelog
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@users.noreply.github.com"
-          git add CHANGELOG.md
-          git commit -m "chore: update changelog after release"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.KEY_SECRET }}
+      # 3. Mostrar el changelog en los logs para depuración (opcional)
+      - name: Display Changelog
+        run: cat CHANGELOG.md
