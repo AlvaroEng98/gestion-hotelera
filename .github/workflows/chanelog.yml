@@ -3,7 +3,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: tu-usuario/generate-changelog-action@v1
+      - uses: AlvaroEng98/generate-changelog-action@v1
         with:
           output_path: "CHANGELOG.md"
           release_count: 2
