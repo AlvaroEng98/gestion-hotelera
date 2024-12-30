@@ -1,19 +1,9 @@
-name: Auto Generate Chanelog
-on:
-  release:
-    types: [created, edited]
-
-    
 jobs:
   changelog:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: conventional Changelog Action
-        id: changelog
-        uses: TriPSs/conventional-changelog-action@v3.7.1
+      - uses: tu-usuario/generate-changelog-action@v1
         with:
-          github-token: ${{ secrets.KEY_SECRET }}
-          # skip-version-file: 'true'
+          output_path: "CHANGELOG.md"
+          release_count: 2
