@@ -1,20 +1,23 @@
-#Name of the Workflow
 name: Start Release
 
-#Disparador del proceso
 on:
   push:
     tags:
-       - "v*"
+      - "v*"
 
-
-#Crear automaticamente el release
 jobs:
   release:
     name: "Release"
     runs-on: "ubuntu-latest"
     steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm install -g conventional-changelog
+      - name: Generate CHANGELOG
+        run: conventional-changelog -p angular -i CHANGELOG.md -s
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.KEY_SECRET }}"
           prerelease: false
+          files: |
+            CHANGELOG.md
