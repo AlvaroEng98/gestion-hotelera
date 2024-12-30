@@ -17,7 +17,11 @@ jobs:
         with:
           fetch-depth: 0  # Asegura que todos los commits y etiquetas estén disponibles
 
-      # 2. Generar y actualizar el archivo de changelog
+      # 2. Recuperar las etiquetas remotas
+      - name: Fetch tags
+        run: git fetch --tags
+
+      # 3. Generar y actualizar el archivo de changelog
       - name: Generate and Commit Changelog
         uses: TriPSs/conventional-changelog-action@v3.7.1
         with:
@@ -26,10 +30,13 @@ jobs:
           preset: angular                    # Usar formato de commits convencionales (Angular preset)
           git-message: "chore: update changelog after release"  # Mensaje del commit
           skip-on-empty: false               # No ignorar releases vacíos
-          tag-prefix: "v"                    # Prefijo para las etiquetas (si usas etiquetas como 'vX.X.X')
+          tag-prefix: "v"                    # Prefijo para las etiquetas
           skip-version-file: false          # No saltarse la actualización del archivo de versión
           version-file: "./package.json"    # Archivo donde se guarda la versión
           version-path: "version"           # Ruta del valor de la versión en el archivo
           config-file-path: ""              # Si tienes configuración extra, puedes agregarla aquí
           pre-commit: false                 # No hacer commit previo si no es necesario
 
+      # 4. Mostrar el changelog en los logs para depuración (opcional)
+      - name: Display Changelog
+        run: cat CHANGELOG.md
