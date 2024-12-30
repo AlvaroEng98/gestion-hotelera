@@ -24,10 +24,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           output-file: CHANGELOG.md           # Archivo que contendrá el changelog
           preset: angular                    # Usar formato de commits convencionales (Angular preset)
-          commit-message: "chore: update changelog after release"  # Mensaje del commit
-          skip-empty: false                  # No ignorar releases vacíos
-          skip-unstable: false               # Incluir commits de versiones preliminares (si aplica)
-          dry-run: false                     # Generar y aplicar cambios directamente
+          git-message: "chore: update changelog after release"  # Mensaje del commit
+          skip-on-empty: false               # No ignorar releases vacíos
+          tag-prefix: "v"                    # Prefijo para las etiquetas (si usas etiquetas como 'vX.X.X')
 
       # 3. Mostrar el changelog en los logs para depuración (opcional)
       - name: Display Changelog
